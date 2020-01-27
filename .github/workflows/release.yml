@@ -11,9 +11,9 @@ jobs:
     - uses: actions/checkout@v1
     - name: Write secrets to files
       run: |
-        echo ${{ secrets.settings }} > ../settings.xml
-        echo ${{ secrets.public }} > ../pubring.gpg
-        echo ${{ secrets.private }} > ../secring.gpg
+        echo "${{ secrets.settings }}" > ../settings.xml
+        echo "${{ secrets.public }}" > ../pubring.gpg
+        echo "${{ secrets.private }}" > ../secring.gpg
     - name: Set version in a new branch and create a tag
       run: |
         git checkout -b _release_${{ github.event.title }}
