@@ -16,6 +16,7 @@ jobs:
         echo "${{ secrets.private }}" > ../secring.gpg
     - name: Set version in a new branch and create a tag
       run: |
+        echo ${{ github.event}}
         git checkout -b _release_${{ github.event.title }}
         mvn versions:set -DnewVersion=${{ github.event.title }}
         git commit -am ${{ github.event.title }}
