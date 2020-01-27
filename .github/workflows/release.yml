@@ -1,0 +1,66 @@
+name: Release
+
+on: 
+  milestone:
+    types: [closed]
+
+jobs:
+  create-release-notes:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    
+    - name: Write secrets to files
+      run: |
+        echo ${{ secrets.settings }} > ../settings.xml
+        echo ${{ secrets.public }} > ../pubring.gpg
+        echo ${{ secrets.private }} > ../secring.gpg
+    - name: Set version in a new branch and create a tag
+      run: |
+        git checkout -b _release_${{ github.event.title }}
+        mvn versions:set -DnewVersion=${{ github.event.title }}
+        git commit -am ${{ github.event.title }}
+        mvn clean deploy --settings ../settings.xml
+        git tag ${{ github.event.title }} -m '${{ github.event.title }}: tagged for release'
+        git push origin ${{ github.event.title }}
+    - name: Create Release Notes
+      uses: docker://decathlon/release-notes-generator-action:2.0.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        OUTPUT_FOLDER: temp_release_notes
+        USE_MILESTONE_TITLE: "true"
+    - name: test created release note
+      run: |
+        cat temp_release_notes/release_file.md
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        RELEASE_CONTENT: $(cat temp_release_notes/release_file.md)
+      with:
+        tag_name: ${{ github.event.title }}
+        release_name: Release ${{ github.event.title }}
+        body: ${{env.RELEASE_CONTENT}}
+        draft: false
+        prerelease: false
+    - name: Upload archive Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} 
+        asset_path: target/concat-${{ github.event.title }}.jar
+        asset_name: concat-${{ github.event.title }}.jar
+        asset_content_type: application/java-archive
+    - name: Upload javadoc Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} 
+        asset_path: target/concat-${{ github.event.title }}-javadoc.jar
+        asset_name: concat-${{ github.event.title }}-javadoc.jar
+        asset_content_type: application/java-archive
