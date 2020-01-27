@@ -16,13 +16,13 @@ jobs:
         echo "${{ secrets.private }}" > ../secring.gpg
     - name: Set version in a new branch and create a tag
       run: |
-        echo ${{ github.event}}
-        git checkout -b _release_${{ github.event.title }}
-        mvn versions:set -DnewVersion=${{ github.event.title }}
-        git commit -am ${{ github.event.title }}
+        echo ${{ github.event.milestone.title}}
+        git checkout -b _release_${{ github.event.milestone.title }}
+        mvn versions:set -DnewVersion=${{ github.event.milestone.title }}
+        git commit -am ${{ github.event.milestone.title }}
         mvn clean deploy --settings ../settings.xml
-        git tag ${{ github.event.title }} -m '${{ github.event.title }}: tagged for release'
-        git push origin ${{ github.event.title }}
+        git tag ${{ github.event.milestone.title }} -m '${{ github.event.milestone.title }}: tagged for release'
+        git push origin ${{ github.event.milestone.title }}
     - name: Create Release Notes
       uses: docker://decathlon/release-notes-generator-action:2.0.0
       env:
@@ -39,8 +39,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         RELEASE_CONTENT: $(cat temp_release_notes/release_file.md)
       with:
-        tag_name: ${{ github.event.title }}
-        release_name: Release ${{ github.event.title }}
+        tag_name: ${{ github.event.milestone.title }}
+        release_name: Release ${{ github.event.milestone.title }}
         body: ${{env.RELEASE_CONTENT}}
         draft: false
         prerelease: false
@@ -50,8 +50,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} 
-        asset_path: target/concat-${{ github.event.title }}.jar
-        asset_name: concat-${{ github.event.title }}.jar
+        asset_path: target/concat-${{ github.event.milestone.title }}.jar
+        asset_name: concat-${{ github.event.milestone.title }}.jar
         asset_content_type: application/java-archive
     - name: Upload javadoc Release Asset
       uses: actions/upload-release-asset@v1.0.1
@@ -59,6 +59,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} 
-        asset_path: target/concat-${{ github.event.title }}-javadoc.jar
-        asset_name: concat-${{ github.event.title }}-javadoc.jar
+        asset_path: target/concat-${{ github.event.milestone.title }}-javadoc.jar
+        asset_name: concat-${{ github.event.milestone.title }}-javadoc.jar
         asset_content_type: application/java-archive
