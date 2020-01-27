@@ -16,7 +16,8 @@ jobs:
         echo "${{ secrets.private }}" > ../secring.gpg
     - name: Set version in a new branch and create a tag
       run: |
-        echo ${{ github.event.milestone.title}}
+        git config --local user.name
+        git config --local user.email
         git checkout -b _release_${{ github.event.milestone.title }}
         mvn versions:set -DnewVersion=${{ github.event.milestone.title }}
         git commit -am ${{ github.event.milestone.title }}
