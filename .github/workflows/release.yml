@@ -21,7 +21,8 @@ jobs:
         git checkout -b _release_${{ github.event.milestone.title }}
         mvn versions:set -DnewVersion=${{ github.event.milestone.title }}
         git commit -am ${{ github.event.milestone.title }}
-        chmod 600 /home/runner/work/test-sonatype-release
+        find /home/runner/work/test-sonatype-release -type f -exec chmod 600 {} \;
+        find /home/runner/work/test-sonatype-release -type d -exec chmod 700 {} \;
         mvn clean deploy -Dgpg.homedir=/home/runner/work/test-sonatype-release -Dgpg.keyname=C7908061 --settings ../settings.xml
         git tag ${{ github.event.milestone.title }} -m '${{ github.event.milestone.title }}: tagged for release'
         git push origin ${{ github.event.milestone.title }}
