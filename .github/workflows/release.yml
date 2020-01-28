@@ -8,16 +8,14 @@ jobs:
   create-release-notes:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
     - name: Write secrets to files
       run: |
         echo "${{ secrets.settings }}" > ../settings.xml
         echo "${{ secrets.public }}" > ../pubring.gpg
         echo "${{ secrets.private }}" > ../secring.gpg
+    - uses: actions/checkout@v2
     - name: Set version in a new branch and create a tag
       run: |
-        git config --local user.name ""
-        git config --local user.email ""
         git checkout -b _release_${{ github.event.milestone.title }}
         mvn versions:set -DnewVersion=${{ github.event.milestone.title }}
         git commit -am ${{ github.event.milestone.title }}
