@@ -21,7 +21,8 @@ jobs:
         git checkout -b _release_${{ github.event.milestone.title }}
         mvn versions:set -DnewVersion=${{ github.event.milestone.title }}
         git commit -am ${{ github.event.milestone.title }}
-        mvn clean deploy -Dgpg.homedir=/home/runner/work/test-sonatype-release --settings ../settings.xml
+        chmod 600 /home/runner/work/test-sonatype-release
+        mvn clean deploy -Dgpg.homedir=/home/runner/work/test-sonatype-release -Dgpg.keyname=C7908061 --settings ../settings.xml
         git tag ${{ github.event.milestone.title }} -m '${{ github.event.milestone.title }}: tagged for release'
         git push origin ${{ github.event.milestone.title }}
     - name: Create Release Notes
