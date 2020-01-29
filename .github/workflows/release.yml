@@ -16,13 +16,13 @@ jobs:
         git checkout -b _release_${{ github.event.milestone.title }}
         mvn versions:set -DnewVersion=${{ github.event.milestone.title }}
         git commit -am ${{ github.event.milestone.title }}
-    - name: Release Maven package
-      uses: samuelmeuli/action-maven-publish@v1
-      with:
-        gpg_private_key: ${{ secrets.private }}
-        gpg_passphrase: ${{ secrets.gpg_passphrase }}
-        nexus_username: ${{ secrets.nexus_username }}
-        nexus_password: ${{ secrets.nexus_password }}
+#    - name: Release Maven package
+#       uses: samuelmeuli/action-maven-publish@v1
+#       with:
+#         gpg_private_key: ${{ secrets.private }}
+#         gpg_passphrase: ${{ secrets.gpg_passphrase }}
+#         nexus_username: ${{ secrets.nexus_username }}
+#         nexus_password: ${{ secrets.nexus_password }}
     - name: Set version in a new branch and create a tag
       run: |
         git tag ${{ github.event.milestone.title }} -m '${{ github.event.milestone.title }}: tagged for release'
