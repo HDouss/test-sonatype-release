@@ -6,12 +6,13 @@ on:
 
 jobs:
   create-release-notes:
+    env:
+      GPG_TTY: $(tty) 
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Set version in a new branch and create a tag
       run: |
-        export GPG_TTY=$(tty)
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         git checkout -b _release_${{ github.event.milestone.title }}
