@@ -33,22 +33,22 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         OUTPUT_FOLDER: temp_release_notes
         USE_MILESTONE_TITLE: "true"
-    - name: test env
-      env:
-        RELEASE_CONTENT: $(cat temp_release_notes/${{ github.event.milestone.title }}.md)
+    - name: set output
+      id: changelog
       run:
-        echo "${{env.RELEASE_CONTENT}}"
+        echo "::set-output name=body::$(cat temp_release_notes/${{ github.event.milestone.title }}.md)"
+    - name: test env
+      run:
+        echo "${{ steps.changelog.outputs.body }}"
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        RELEASE_CONTENT: $(cat temp_release_notes/${{ github.event.milestone.title }}.md)
       with:
         tag_name: ${{ github.event.milestone.title }}
         release_name: Release ${{ github.event.milestone.title }}
-        body: |
-          ${{env.RELEASE_CONTENT}}
+        body: ${{ steps.changelog.outputs.body }}
         draft: false
         prerelease: false
     - name: Upload archive Release Asset
