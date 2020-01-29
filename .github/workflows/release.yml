@@ -35,14 +35,18 @@ jobs:
         USE_MILESTONE_TITLE: "true"
     - name: set output
       id: changelog
-      run:
-        echo "::set-output name=body::$(cat temp_release_notes/${{ github.event.milestone.title }}.md)"
+      run: |
+        description=$(cat temp_release_notes/${{ github.event.milestone.title }}.md)
+        description="${description//'%'/'%25'}"
+        description="${description//$'\n'/'%0A'}"
+        description="${description//$'\r'/'%0D'}"
+        echo "::set-output name=body::$description"
     - name: test env
       run:
         echo "${{ steps.changelog.outputs.body }}"
     - name: Create Release
       id: create_release
-      uses: actions/create-release@v1
+      uses: actions/create-release@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
