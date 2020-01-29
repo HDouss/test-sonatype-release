@@ -35,13 +35,13 @@ jobs:
         USE_MILESTONE_TITLE: "true"
     - name: test created release note
       run: |
-        cat temp_release_notes/release_file.md
+        cat temp_release_notes/${{ github.event.milestone.title }}.md
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        RELEASE_CONTENT: $(cat temp_release_notes/release_file.md)
+        RELEASE_CONTENT: $(cat temp_release_notes/${{ github.event.milestone.title }}.md)
       with:
         tag_name: ${{ github.event.milestone.title }}
         release_name: Release ${{ github.event.milestone.title }}
