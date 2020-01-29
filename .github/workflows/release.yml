@@ -6,8 +6,6 @@ on:
 
 jobs:
   create-release-notes:
-    env:
-      GPG_TTY: $(tty) 
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
