@@ -14,6 +14,8 @@ jobs:
         echo "${{ secrets.public }}" > ../pubring.gpg
         echo "${{ secrets.private }}" > ../secring.gpg
     - uses: actions/checkout@v2
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v1
     - name: Set version in a new branch and create a tag
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
