@@ -14,10 +14,9 @@ jobs:
     - name: Set version in pom
       run: mvn versions:set -DnewVersion=${{ github.event.milestone.title }}
     - name: Commit pom changes
-      uses: matheusalbino/git-commit@v1.0.1
+      uses: zwaldowski/git-commit-action@v1
       with:
-        message: ${{ github.event.milestone.title }}
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+        commit_message: ${{ github.event.milestone.title }}
     - name: Tag current commit and push the tag
       uses: weareyipyip/walking-tag-action@v1
       env:
