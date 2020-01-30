@@ -21,11 +21,11 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Tag and push current commit
       uses: weareyipyip/walking-tag-action@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         TAG_NAME: ${{ github.event.milestone.title }}
         TAG_MESSAGE: ${{ github.event.milestone.title }} tagged for release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #     - name: Release Maven package
 #       uses: samuelmeuli/action-maven-publish@v1
 #       with:
