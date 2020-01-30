@@ -15,7 +15,6 @@ jobs:
         git config --local user.name "github-actions[bot]"
         git checkout -b _release_${{ github.event.milestone.title }}
         mvn versions:set -DnewVersion=${{ github.event.milestone.title }}
-        git commit -am ${{ github.event.milestone.title }}
     - name: Release Maven package
       uses: samuelmeuli/action-maven-publish@v1
       with:
@@ -23,10 +22,6 @@ jobs:
         gpg_passphrase: ${{ secrets.gpg_passphrase }}
         nexus_username: ${{ secrets.nexus_username }}
         nexus_password: ${{ secrets.nexus_password }}
-    - name: Set version in a new branch and create a tag
-      run: |
-        git tag ${{ github.event.milestone.title }} -m '${{ github.event.milestone.title }}: tagged for release'
-        git push origin ${{ github.event.milestone.title }}
     - name: Create Release Notes
       uses: docker://decathlon/release-notes-generator-action:2.0.0
       env:
@@ -42,9 +37,6 @@ jobs:
         description="${description//$'\r'/'%0D'}"
         description="${description%%## :heart*}"
         echo "::set-output name=body::$description"
-    - name: test env
-      run:
-        echo "${{ steps.changelog.outputs.body }}"
     - name: Create Release
       id: create_release
       uses: actions/create-release@master
