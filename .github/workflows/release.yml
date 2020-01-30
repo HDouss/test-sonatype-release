@@ -18,12 +18,9 @@ jobs:
       with:
         commit_message: ${{ github.event.milestone.title }}
     - name: Tag current commit and push the tag
-      uses: weareyipyip/walking-tag-action@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        TAG_NAME: ${{ github.event.milestone.title }}
-        TAG_MESSAGE: ${{ github.event.milestone.title }} tagged for release
+      run: |
+        git tag ${{ github.event.milestone.title }} -m '${{ github.event.milestone.title }}: tagged for release'
+        git push origin ${{ github.event.milestone.title }}
 #     - name: Release Maven package
 #       uses: samuelmeuli/action-maven-publish@v1
 #       with:
