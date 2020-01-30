@@ -9,14 +9,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Set version in a new branch and create a tag
+    - uses: peterjgrainger/action-create-branch@v1.0.0
+      with:
+        branch: 'release_${{ github.event.milestone.title }}'
+    - name: Set version
       run: |
         mvn versions:set -DnewVersion=${{ github.event.milestone.title }}
     - uses: matheusalbino/git-commit@v1.0.1
       with:
         message: ${{ github.event.milestone.title }}
         github-token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Set Git tag
+    - name: Tag and push current commit
       uses: weareyipyip/walking-tag-action@v1
       with:
         TAG_NAME: ${{ github.event.milestone.title }}
@@ -36,7 +39,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         OUTPUT_FOLDER: temp_release_notes
         USE_MILESTONE_TITLE: "true"
-    - name: set output
+    - name: Transform release notes to be used in release body
       id: changelog
       run: |
         description=$(cat temp_release_notes/${{ github.event.milestone.title }}.md)
