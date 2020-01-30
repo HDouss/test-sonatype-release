@@ -17,6 +17,8 @@ jobs:
       uses: zwaldowski/git-commit-action@v1
       with:
         commit_message: ${{ github.event.milestone.title }}
+        author_name: github-actions[bot]
+        author_email: github-actions[bot]@users.noreply.github.com
     - name: Tag current commit and push the tag
       run: |
         git tag ${{ github.event.milestone.title }} -m '${{ github.event.milestone.title }}: tagged for release'
