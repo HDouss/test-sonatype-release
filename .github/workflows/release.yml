@@ -19,7 +19,7 @@ jobs:
         commit_message: ${{ github.event.milestone.title }}
         author_name: github-actions[bot]
         author_email: github-actions[bot]@users.noreply.github.com
-    - name: Tag current commit and push the tag
+    - name: Tag changes and push the tag
       run: |
         git tag ${{ github.event.milestone.title }} -m '${{ github.event.milestone.title }}: tagged for release'
         git push origin ${{ github.event.milestone.title }}
@@ -45,7 +45,7 @@ jobs:
         description="${description//$'\r'/'%0D'}"
         description="${description%%## :heart*}"
         echo "::set-output name=body::$description"
-    - name: Create Release in GitHub
+    - name: Create release in GitHub
       id: create_release
       uses: actions/create-release@master
       env:
