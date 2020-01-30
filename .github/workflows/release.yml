@@ -40,6 +40,7 @@ jobs:
         description="${description//'%'/'%25'}"
         description="${description//$'\n'/'%0A'}"
         description="${description//$'\r'/'%0D'}"
+        description="${description%%## :heart*}"
         echo "::set-output name=body::$description"
     - name: test env
       run:
