@@ -9,19 +9,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: peterjgrainger/action-create-branch@v1.0.0
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        branch: 'release_${{ github.event.milestone.title }}'
-    - name: Set version
-      run: |
-        mvn versions:set -DnewVersion=${{ github.event.milestone.title }}
-    - uses: matheusalbino/git-commit@v1.0.1
+    - name: Create a new temporary branch
+      run: git checkout -b release_${{ github.event.milestone.title }}
+    - name: Set version in pom
+      run: mvn versions:set -DnewVersion=${{ github.event.milestone.title }}
+    - name: Commit pom changes
+      uses: matheusalbino/git-commit@v1.0.1
       with:
         message: ${{ github.event.milestone.title }}
         github-token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Tag and push current commit
+    - name: Tag current commit and push the tag
       uses: weareyipyip/walking-tag-action@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -50,7 +47,7 @@ jobs:
         description="${description//$'\r'/'%0D'}"
         description="${description%%## :heart*}"
         echo "::set-output name=body::$description"
-    - name: Create Release
+    - name: Create Release in GitHub
       id: create_release
       uses: actions/create-release@master
       env:
@@ -61,7 +58,7 @@ jobs:
         body: ${{ steps.changelog.outputs.body }}
         draft: false
         prerelease: false
-    - name: Upload archive Release Asset
+    - name: Upload jar as release asset
       uses: actions/upload-release-asset@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -70,7 +67,7 @@ jobs:
         asset_path: target/concat-${{ github.event.milestone.title }}.jar
         asset_name: concat-${{ github.event.milestone.title }}.jar
         asset_content_type: application/java-archive
-    - name: Upload javadoc Release Asset
+    - name: Upload javadoc as release asset
       uses: actions/upload-release-asset@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
