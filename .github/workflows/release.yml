@@ -19,10 +19,6 @@ jobs:
         commit_message: ${{ github.event.milestone.title }}
         author_name: github-actions[bot]
         author_email: github-actions[bot]@users.noreply.github.com
-    - name: Tag changes and push the tag
-      run: |
-        git tag ${{ github.event.milestone.title }} -m '${{ github.event.milestone.title }}: tagged for release'
-        git push origin ${{ github.event.milestone.title }}
     - name: Release Maven package
       uses: samuelmeuli/action-maven-publish@v1
       with:
@@ -30,6 +26,10 @@ jobs:
         gpg_passphrase: ${{ secrets.gpg_passphrase }}
         nexus_username: ${{ secrets.nexus_username }}
         nexus_password: ${{ secrets.nexus_password }}
+    - name: Tag changes and push the tag
+      run: |
+        git tag ${{ github.event.milestone.title }} -m '${{ github.event.milestone.title }}: tagged for release'
+        git push origin ${{ github.event.milestone.title }}
     - name: Create release notes markdown
       uses: docker://decathlon/release-notes-generator-action:2.0.0
       env:
