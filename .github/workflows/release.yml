@@ -24,7 +24,6 @@ jobs:
         DISPLAY: ':99'
       run: |
         Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-    - name: Release Maven package
       uses: samuelmeuli/action-maven-publish@v1
       with:
         gpg_private_key: ${{ secrets.private }}
